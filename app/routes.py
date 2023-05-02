@@ -67,3 +67,54 @@ def read_all_crystals():
             "powers": crystal.powers
         })
     return jsonify(crystals_response)
+
+# define a route for getting a sunngle crystal
+# GET/crystals/<crystal_id>
+
+@crystal_bp.route("/<crystal_id>", methods=["GET"])
+def read_one_crystal(crystal_id):
+    # query our db to grab the crystal that has the id we want
+    crystal = Crystal.query.get(crystal_id)
+
+    # show single crystal
+    return {
+       "id": crystal.id,
+            "name": crystal.name,
+            "color": crystal.color,
+            "powers": crystal.powers 
+    }, 200
+
+# define a route for updating crystal
+# PUT /CRYSTALS/<crystal_id>
+@crystal_bp.route("/<crystal_id>", methods=['PUT'])
+def update_crystal(crystal_id):
+    # query our db to grab the crystal that has the id we want
+    crystal = Crystal.query.get(crystal_id)
+    # shape request body
+    request_body = request.get_json()
+
+    crystal.name = request_body["name"]
+    crystal.color = request_body["color"]
+    crystal.powers = request_body["powers"]
+
+    # commit changes 
+    db.session.commit()
+
+    # send back updated crystal
+    return {
+        "id": crystal.id,
+        "name": crystal.name,
+        "color": crystal.color,
+        "powers": crystal.powers 
+    }, 200
+
+# Define a route for deleting one crystal
+# DELETE/crystals/<crystal_id>
+@crystal_bp.route("/<crystal_id>", methods=['DELETE'])
+def delete_crystal(crystal_id):
+    crystal = Crystal.query.get(crystal_id)
+
+    db.session.delete(crystal)
+    db.session.commit()
+
+    return make_response(f"Crystal #{crystal.id} successfully deleted")
