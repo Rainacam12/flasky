@@ -34,9 +34,22 @@ crystal_bp = Blueprint("crystals", __name__, url_prefix="/crystals")
 
 #     return jsonify(crystal_response)
 
-@crystal_bp.route("", methods=['POST'])
+
+def validate_crystal(crystal_id):
+    try:
+        crystal_id = int(crystal_id)
+    except:
+        abort(make_response({"message": f"{crystal_id} is not a valid type ({type(crystal_id)})."}, 400))
+
+    crystal = Crystal.query.get(crystal_id)
+
+    if not crystal:
+        abort(make_response({"message":f"Crystal {crystal_id} does not exist"}, 404))
+
+    return crystal
 
 # define route for creating a crystal
+@crystal_bp.route("", methods=['POST'])
 def handle_crystals():
     request_body = request.get_json()
 
@@ -74,7 +87,7 @@ def read_all_crystals():
 @crystal_bp.route("/<crystal_id>", methods=["GET"])
 def read_one_crystal(crystal_id):
     # query our db to grab the crystal that has the id we want
-    crystal = Crystal.query.get(crystal_id)
+    crystal = validate_crystal(crystal_id)
 
     # show single crystal
     return {
@@ -89,7 +102,7 @@ def read_one_crystal(crystal_id):
 @crystal_bp.route("/<crystal_id>", methods=['PUT'])
 def update_crystal(crystal_id):
     # query our db to grab the crystal that has the id we want
-    crystal = Crystal.query.get(crystal_id)
+    crystal = validate_crystal(crystal_id)
     # shape request body
     request_body = request.get_json()
 
@@ -112,7 +125,7 @@ def update_crystal(crystal_id):
 # DELETE/crystals/<crystal_id>
 @crystal_bp.route("/<crystal_id>", methods=['DELETE'])
 def delete_crystal(crystal_id):
-    crystal = Crystal.query.get(crystal_id)
+    crystal = validate_crystal(crystal_id)
 
     db.session.delete(crystal)
     db.session.commit()
