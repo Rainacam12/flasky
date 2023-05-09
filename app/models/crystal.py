@@ -6,6 +6,8 @@ class Crystal(db.Model):
     name = db.Column(db.String)
     color = db.Column(db.String)
     powers = db.Column(db.String)
+    healer = db.relationship("Healer", back_populates="crystals")
+    healer_id = db.Column(db.Integer, db.ForeignKey('healer.id'))
 
     @classmethod
     # in class methods, cls must come first. it's a reference to the class itself
