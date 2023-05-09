@@ -46,7 +46,7 @@ def validate_model(cls, model_id):
     model = cls.query.get(model_id)
 
     if not model:
-        abort(make_response({f"message":"{class.__name__} {model_id} does not exist"}, 404))
+        abort(make_response({"message":f"{cls.__name__} {model_id} does not exist"}, 404))
 
     return model
 
