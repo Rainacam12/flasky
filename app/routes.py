@@ -95,7 +95,7 @@ def read_all_crystals():
 @crystal_bp.route("/<crystal_id>", methods=["GET"])
 def read_one_crystal(crystal_id):
     # query our db to grab the crystal that has the id we want
-    crystal = validate_model(crystal_id)
+    crystal = validate_model(Crystal, crystal_id)
 
     # show single crystal
     return crystal.to_dict(), 200
@@ -123,7 +123,7 @@ def update_crystal(crystal_id):
 # DELETE/crystals/<crystal_id>
 @crystal_bp.route("/<crystal_id>", methods=['DELETE'])
 def delete_crystal(crystal_id):
-    crystal = validate_model(crystal_id)
+    crystal = validate_model(Crystal, crystal_id)
 
     db.session.delete(crystal)
     db.session.commit()
